@@ -1028,6 +1028,7 @@ export namespace Prisma {
     email: string | null
     firstname: string | null
     lastname: string | null
+    password: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -1035,6 +1036,7 @@ export namespace Prisma {
     email: string | null
     firstname: string | null
     lastname: string | null
+    password: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -1042,6 +1044,7 @@ export namespace Prisma {
     email: number
     firstname: number
     lastname: number
+    password: number
     _all: number
   }
 
@@ -1059,6 +1062,7 @@ export namespace Prisma {
     email?: true
     firstname?: true
     lastname?: true
+    password?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -1066,6 +1070,7 @@ export namespace Prisma {
     email?: true
     firstname?: true
     lastname?: true
+    password?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -1073,6 +1078,7 @@ export namespace Prisma {
     email?: true
     firstname?: true
     lastname?: true
+    password?: true
     _all?: true
   }
 
@@ -1167,6 +1173,7 @@ export namespace Prisma {
     email: string
     firstname: string
     lastname: string
+    password: string
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -1193,6 +1200,7 @@ export namespace Prisma {
     email?: boolean
     firstname?: boolean
     lastname?: boolean
+    password?: boolean
     pdf?: boolean | User$pdfArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -1202,6 +1210,7 @@ export namespace Prisma {
     email?: boolean
     firstname?: boolean
     lastname?: boolean
+    password?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1209,6 +1218,7 @@ export namespace Prisma {
     email?: boolean
     firstname?: boolean
     lastname?: boolean
+    password?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -1216,9 +1226,10 @@ export namespace Prisma {
     email?: boolean
     firstname?: boolean
     lastname?: boolean
+    password?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "firstname" | "lastname", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "firstname" | "lastname" | "password", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     pdf?: boolean | User$pdfArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1236,6 +1247,7 @@ export namespace Prisma {
       email: string
       firstname: string
       lastname: string
+      password: string
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -1664,6 +1676,7 @@ export namespace Prisma {
     readonly email: FieldRef<"User", 'String'>
     readonly firstname: FieldRef<"User", 'String'>
     readonly lastname: FieldRef<"User", 'String'>
+    readonly password: FieldRef<"User", 'String'>
   }
     
 
@@ -3195,7 +3208,8 @@ export namespace Prisma {
     id: 'id',
     email: 'email',
     firstname: 'firstname',
-    lastname: 'lastname'
+    lastname: 'lastname',
+    password: 'password'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -3285,6 +3299,7 @@ export namespace Prisma {
     email?: StringFilter<"User"> | string
     firstname?: StringFilter<"User"> | string
     lastname?: StringFilter<"User"> | string
+    password?: StringFilter<"User"> | string
     pdf?: PdfListRelationFilter
   }
 
@@ -3293,6 +3308,7 @@ export namespace Prisma {
     email?: SortOrder
     firstname?: SortOrder
     lastname?: SortOrder
+    password?: SortOrder
     pdf?: PdfOrderByRelationAggregateInput
   }
 
@@ -3304,6 +3320,7 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     firstname?: StringFilter<"User"> | string
     lastname?: StringFilter<"User"> | string
+    password?: StringFilter<"User"> | string
     pdf?: PdfListRelationFilter
   }, "id" | "email">
 
@@ -3312,6 +3329,7 @@ export namespace Prisma {
     email?: SortOrder
     firstname?: SortOrder
     lastname?: SortOrder
+    password?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -3327,6 +3345,7 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"User"> | string
     firstname?: StringWithAggregatesFilter<"User"> | string
     lastname?: StringWithAggregatesFilter<"User"> | string
+    password?: StringWithAggregatesFilter<"User"> | string
   }
 
   export type PdfWhereInput = {
@@ -3385,6 +3404,7 @@ export namespace Prisma {
     email: string
     firstname: string
     lastname: string
+    password: string
     pdf?: PdfCreateNestedManyWithoutUserInput
   }
 
@@ -3393,6 +3413,7 @@ export namespace Prisma {
     email: string
     firstname: string
     lastname: string
+    password: string
     pdf?: PdfUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -3400,6 +3421,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     firstname?: StringFieldUpdateOperationsInput | string
     lastname?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     pdf?: PdfUpdateManyWithoutUserNestedInput
   }
 
@@ -3408,6 +3430,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     firstname?: StringFieldUpdateOperationsInput | string
     lastname?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     pdf?: PdfUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -3416,12 +3439,14 @@ export namespace Prisma {
     email: string
     firstname: string
     lastname: string
+    password: string
   }
 
   export type UserUpdateManyMutationInput = {
     email?: StringFieldUpdateOperationsInput | string
     firstname?: StringFieldUpdateOperationsInput | string
     lastname?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -3429,6 +3454,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     firstname?: StringFieldUpdateOperationsInput | string
     lastname?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
   }
 
   export type PdfCreateInput = {
@@ -3517,6 +3543,7 @@ export namespace Prisma {
     email?: SortOrder
     firstname?: SortOrder
     lastname?: SortOrder
+    password?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -3528,6 +3555,7 @@ export namespace Prisma {
     email?: SortOrder
     firstname?: SortOrder
     lastname?: SortOrder
+    password?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -3535,6 +3563,7 @@ export namespace Prisma {
     email?: SortOrder
     firstname?: SortOrder
     lastname?: SortOrder
+    password?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -3799,6 +3828,7 @@ export namespace Prisma {
     email: string
     firstname: string
     lastname: string
+    password: string
   }
 
   export type UserUncheckedCreateWithoutPdfInput = {
@@ -3806,6 +3836,7 @@ export namespace Prisma {
     email: string
     firstname: string
     lastname: string
+    password: string
   }
 
   export type UserCreateOrConnectWithoutPdfInput = {
@@ -3828,6 +3859,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     firstname?: StringFieldUpdateOperationsInput | string
     lastname?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUncheckedUpdateWithoutPdfInput = {
@@ -3835,6 +3867,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     firstname?: StringFieldUpdateOperationsInput | string
     lastname?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
   }
 
   export type PdfCreateManyUserInput = {
