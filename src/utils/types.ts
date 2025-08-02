@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express"
 
-type Req = Request 
+type Req = Request & {
+    token?: string;
+}
 type Res = Response
 type Next = NextFunction
 
@@ -11,8 +13,16 @@ interface User {
     password: string;
 }
 
+interface RedisMailPayload {
+    otp: number;
+    email: string;
+    password?: string;
+    firstname?: string;
+    lastname?: string;
+    id?: number
+}
 
 
 export {
-    Req, Res, Next, User
+    Req, Res, Next, User, RedisMailPayload
 }

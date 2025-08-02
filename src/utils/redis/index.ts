@@ -1,27 +1,40 @@
-import {createClient} from "redis"
+import {createClient} from "redis";
+import { RedisMailPayload } from "../types";
 
 const redisClient = createClient({
     username: "default",
-    password: "VgM2vPfEFguVHcwdaJCRX37nDbH7AFhd",
+    password: process.env.redisPassword || "",
     socket: {
-        host: 'redis-12685.c240.us-east-1-3.ec2.redns.redis-cloud.com',
+        host: process.env.redisHost,
         port: 12685
     }
 });
 
-interface RedisMailPayload {
-    otp: number;
-    email: string;
-    password: string;
-    firstname: string;
-    lastname: string;
-}
 
 // store otp
-async function redisStoreOtp({otp, email, password, firstname, lastname}: RedisMailPayload): Promise<void> {
+async function redisStoreOtp({otp, email, password, firstname, lastname, id}: RedisMailPayload): Promise<void> {
+    const payload: RedisMailPayload = {
+        otp, email
+    }
+
+    if(id) {
+        payload["id"] = id
+    }
+
+    if(firstname) {
+        payload["firstname"] = firstname;
+    }
+
+    if(lastname) {
+        payload["lastname"] = lastname;
+    }
+
+    if(password) {
+        payload["password"] = password;
+    }
     try {
         const response = await redisClient.set(email, JSON.stringify({
-            email, otp, password, firstname, lastname
+            ...payload
         }))
 
         console.log("otp stored in redis successfully");

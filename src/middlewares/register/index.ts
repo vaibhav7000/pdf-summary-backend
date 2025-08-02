@@ -52,7 +52,7 @@ async function emailChecker(req: Req, res: Res, next: Next) {
     }
 }
 
-function emailValidator(req: Req, res: Res, next: Next) {
+function emailOtpValidator(req: Req, res: Res, next: Next) {
     const {email, otp}: {email: string; otp: number} = req["body"];
 
     const result = emailOTPSchema.safeParse({
@@ -75,5 +75,5 @@ function emailValidator(req: Req, res: Res, next: Next) {
 
 
 export {
-    userSchemaValidate, emailChecker, emailValidator
+    userSchemaValidate, emailChecker, emailOtpValidator
 }

@@ -89,6 +89,7 @@ async function verifyOtpAndStoreUser(req: Req, res: Res, next: Next) {
                 email: response["email"]
             }, process.env.jwtPassword);
 
+            req["token"] = token;
 
             next();
         } catch (error) {

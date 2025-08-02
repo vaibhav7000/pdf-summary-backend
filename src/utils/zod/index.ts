@@ -26,7 +26,22 @@ const emailOTPSchema = z.object({
     otp: z.number().min(1000).max(9999)
 })
 
+const loginPasswordSchema = z.object({
+    email: z.email({
+        error: "Send a valid email",
+    }),
+    password: z.string().min(8, {
+        error: "Wrong Password, Atleat 8 characters required"
+    })
+})
+
+const loginOTPSchema = z.object({
+    email: z.email({
+        error: "Send valid Email"
+    })
+})
+
 
 export {
-    UserSchema, emailOTPSchema
+    UserSchema, emailOTPSchema, loginOTPSchema, loginPasswordSchema 
 }
