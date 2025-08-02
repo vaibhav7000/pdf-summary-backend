@@ -3,7 +3,7 @@ import prismaClient from "../../db";
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
 import jwt from "jsonwebtoken";
 import { generateOTP, generateToken } from "../../utils/application";
-import { redisGetOtp, redisStoreOtp } from "../../utils/redis";
+import { redisDeleteOtp, redisGetOtp, redisStoreOtp } from "../../utils/redis";
 import sendMail from "../../utils/nodemailer";
 
 async function userCheckerAndToken(req: Req, res: Res, next: Next) {
@@ -108,20 +108,26 @@ async function verifOTPAndToken(req: Req, res: Res, next: Next) {
         if (otp !== output["otp"]) {
             res.status(StatusCodes.CONFLICT).json({
                 phrase: ReasonPhrases.CONFLICT,
-                msg: "Incorrect Password",
+                msg: "Incorrect OTP",
             })
 
             return;
         }
 
-        const token: string = generateToken({
-            email: output["email"],
-            id: output["id"]!
-        });
+        try {
+            await redisDeleteOtp(email);
 
-        req["token"] = token
+            const token: string = generateToken({
+                email: output["email"],
+                id: output["id"]!
+            });
 
-        next();
+            req["token"] = token
+
+            next();
+        } catch (error) {
+            next(error);
+        }
     } catch (error) {
         next(error);
     }

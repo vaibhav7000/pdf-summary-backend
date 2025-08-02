@@ -1,7 +1,7 @@
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { generateOTP } from "../../utils/application";
 import sendMail from "../../utils/nodemailer";
-import { redisGetOtp, redisStoreOtp } from "../../utils/redis";
+import { redisDeleteOtp, redisGetOtp, redisStoreOtp } from "../../utils/redis";
 import { Next, Req, Res, User } from "../../utils/types";
 import prismaClient from "../../db";
 import jwt from "jsonwebtoken"
@@ -35,12 +35,12 @@ async function storeOTPRedisSendEmail(req: Req, res: Res, next: Next) {
 }
 
 async function verifyOtpAndStoreUser(req: Req, res: Res, next: Next) {
-    const {email, otp}: {email: string; otp: number;} = req["body"];
+    const { email, otp }: { email: string; otp: number; } = req["body"];
 
     try {
         const response = await redisGetOtp(email);
 
-        if(!response) {
+        if (!response) {
             res.status(StatusCodes.REQUEST_TIMEOUT).json({
                 phrase: ReasonPhrases.REQUEST_TIMEOUT,
                 msg: "OTP expired"
@@ -57,7 +57,7 @@ async function verifyOtpAndStoreUser(req: Req, res: Res, next: Next) {
             otp: number;
         } = JSON.parse(response);
 
-        if(otp !== output["otp"]) {
+        if (otp !== output["otp"]) {
             res.status(StatusCodes.CONFLICT).json({
                 phrase: ReasonPhrases.CONFLICT,
                 msg: "Incorrect Password"
@@ -67,35 +67,41 @@ async function verifyOtpAndStoreUser(req: Req, res: Res, next: Next) {
 
 
         try {
-            const response = await prismaClient.user.create({
-                data : {
-                    email: output["email"],
-                    password: output["password"],
-                    firstname: output["firstname"],
-                    lastname: output["lastname"]
-                }, select: {
-                    email: true,
-                    id: true
+            await redisDeleteOtp(email);
+
+            try {
+                const response = await prismaClient.user.create({
+                    data: {
+                        email: output["email"],
+                        password: output["password"],
+                        firstname: output["firstname"],
+                        lastname: output["lastname"]
+                    }, select: {
+                        email: true,
+                        id: true
+                    }
+                })
+
+                if (!process.env.jwtPassword) {
+                    next(new Error("Jwt password does not exist"));
+                    return
                 }
-            })
 
-            if(!process.env.jwtPassword) {
-                next(new Error("Jwt password does not exist"));
-                return
+                const token: string = jwt.sign({
+                    id: response["id"],
+                    email: response["email"]
+                }, process.env.jwtPassword);
+
+                req["token"] = token;
+
+                next();
+            } catch (error) {
+                next(error);
             }
-
-            const token: string = jwt.sign({
-                id: response["id"],
-                email: response["email"]
-            }, process.env.jwtPassword);
-
-            req["token"] = token;
-
-            next();
         } catch (error) {
             next(error);
         }
-        
+
     } catch (error) {
         next(error);
     }
