@@ -4,6 +4,7 @@ import storePdf from "../../utils/supabase/supabase";
 import { Next, Req, Res } from "../../utils/types";
 import prismaClient from "../../db";
 import aiSummarizer from "../../utils/gemini";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
 
 
 async function storePDFSupabase(buffer: Buffer, filename: string) {
@@ -16,42 +17,69 @@ async function storePDFSupabase(buffer: Buffer, filename: string) {
 }
 
 
-async function getSummaryGemini(text: string, summaryText: string) {
-
+async function getSummaryGemini(text: string, buffer: Buffer): Promise<string | undefined> {
+    try {
+        const result = await aiSummarizer(text, buffer);
+        return result;
+    } catch (error) {
+        throw error;
+    }
 }
 
 
 async function summaryAndStore(req: Req, res: Res, next: Next): Promise<void> {
     const file = req["file"];
     const decode = req["decode"];
+    const search: string = req["body"].search || "Summary of the text";
 
-    if(!decode) {
-        next(new Error());
-        return
+    if (!decode) {
+        throw new Error("Token does not exist");
     }
 
-    const { id } = decode;
+    const { id, email } = decode;
 
-    if(!file) {
+    if (!file) {
         next(new multer.MulterError("LIMIT_UNEXPECTED_FILE"));
         return;
     }
 
+    // const pdfText: string = await getTextFromBuffer(file.buffer);
+
+    const filename: string = `${email}/${file.originalname}`;
+
     try {
-        // const pdfText: string = await getTextFromBuffer(file.buffer);
+        const response = await storePDFSupabase(file.buffer, filename);
 
-        const filename: string = `${file.originalname} ${new Date()}`
+        if('message' in response) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                phrase: ReasonPhrases.BAD_REQUEST,
+                msg: response["message"],
+            })
+            return
+        }
+        
+        try {
+            await actionsOnPDFTable(id, filename, response.signedUrl);
 
-        const response = await storePDFSupabase(file.buffer, filename)
 
-        await actionsOnPDFTable(id, response["id"], response["fullPath"]);
+            try {
+                const summary = await getSummaryGemini(search, file["buffer"]);
 
-        await aiSummarizer("", file["buffer"]);
+                res.status(StatusCodes.CREATED).json({
+                    phrase: ReasonPhrases.CREATED,
+                    summary
+                })
 
-        next();
+            } catch (error) {
+                next(error);
+            }
+        } catch (error) {
+            next(error);
+        }
     } catch (error) {
-        next(error);
+
     }
+
 }
 
 async function actionsOnPDFTable(id: number, title: string, link: string) {
@@ -63,8 +91,6 @@ async function actionsOnPDFTable(id: number, title: string, link: string) {
                 link
             }
         })
-
-        console.log("pdf table altered");
     } catch (error) {
         throw error;
     }

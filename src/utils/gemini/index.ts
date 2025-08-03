@@ -4,10 +4,10 @@ const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY!
 })
 
-async function aiSummarizer(text: string, buffer: Buffer): Promise<void> {
+async function aiSummarizer(text: string, buffer: Buffer): Promise<string | undefined> {
     try {
         const contents = [
-            { text: "Summarize this document" },
+            { text },
             {
                 inlineData: {
                     mimeType: "application/pdf",
@@ -21,7 +21,7 @@ async function aiSummarizer(text: string, buffer: Buffer): Promise<void> {
             contents
         })
 
-        console.log(response["text"])
+        return response.text;
     } catch (error) {
         throw error;
     }

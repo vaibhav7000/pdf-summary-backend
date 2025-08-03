@@ -1,24 +1,18 @@
 import { Router } from "express";
-import { verifyToken } from "../../middlewares/application-routes";
-import multer from "multer";
+import { userFreeTier, verifyToken } from "../../middlewares/application-routes";
 import { Next, Req, Res } from "../../utils/types";
-import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import upload from "../../utils/mutler/multer";
-import getTextFromBuffer from "../../utils/pdf-parser";
 import summaryAndStore from "../../controller/application-routes";
 
 const router = Router();
 
 router.use(verifyToken);
 
+router.use(userFreeTier);
+
 router.use(upload.single("files")); // middleware that is used to extract multi-part/format-data
 
-router.post("/", summaryAndStore, (req: Req, res: Res, next: Next) => {
-    res.status(StatusCodes.OK).json({
-        phrase: ReasonPhrases.OK,
-        msg: "PDF saved successfully"
-    })
-});
+router.post("/", summaryAndStore);
 
 export default router;
 

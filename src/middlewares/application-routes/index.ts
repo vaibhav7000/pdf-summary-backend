@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { Next, Req, Res } from "../../utils/types";
 import { jwtPayload, tokenSchema } from "../../utils/zod";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import prismaClient from "../../db";
 
 function verifyToken(req: Req, res: Res, next: Next) {
     const token: string | undefined = req["headers"]["authorization"];
@@ -57,6 +58,40 @@ function verifyToken(req: Req, res: Res, next: Next) {
     }
 }
 
+async function userFreeTier(req: Req, res: Res, next: Next) {
+    const decode = req["decode"];
+
+    if(!decode) {
+        res.status(StatusCodes.UNAUTHORIZED).json({
+            phrase: ReasonPhrases.UNAUTHORIZED,
+            msg: "In valid Token"
+        })
+        return;
+    }
+
+    const { id }: {id: number} = decode;
+
+    try {
+        const response = await prismaClient.pdf.findMany({
+            where: {
+                userId: id
+            }
+        })
+
+        if(response.length >= 5) {
+            res.status(StatusCodes.UNAUTHORIZED).json({
+                phrase: ReasonPhrases.UNAUTHORIZED,
+                msg: "You have exhausted free tier",
+            })
+            return
+        }
+
+        next()
+    } catch (error) {
+        next(error);
+    }
+}
+
 export {
-    verifyToken
+    verifyToken, userFreeTier
 }

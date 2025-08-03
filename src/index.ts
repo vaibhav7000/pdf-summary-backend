@@ -7,6 +7,8 @@ import prismaClient from "./db";
 import redisClient from "./utils/redis";
 import allRoutes from "./routes/all-routes";
 import multer from "multer";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { SupabaseAuthClient } from "@supabase/supabase-js/dist/module/lib/SupabaseAuthClient";
 
 const app = Express();
 
@@ -54,7 +56,7 @@ app.use(function(error: Error, req: Request, res: Response, next: NextFunction) 
                 return;
             }
         }
-        console.log(error);
+
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             phrase: ReasonPhrases.INTERNAL_SERVER_ERROR,
             msg: "Something up with the backend Try again later"

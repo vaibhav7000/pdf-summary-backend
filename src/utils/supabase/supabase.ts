@@ -7,16 +7,24 @@ async function storePdf(filename: string, buffer: Buffer){
     const bucketName: string = "pdf-collection";
 
     try {
-        const response = await supabaseClient.storage.from(bucketName).upload(filename, buffer, {
+        const {data, error} = await supabaseClient.storage.from(bucketName).upload(filename, buffer, {
             contentType: "application/pdf",
             upsert: false
         })
 
-        if(response["error"]) {
-            throw new Error(response["error"].message);
+        if(error) {
+            return error;
         }
 
-        return response["data"]
+        const final = await supabaseClient.storage.from(bucketName).createSignedUrl(filename, 60 * 60, {
+            download: true
+        })
+
+        if(final.error) {
+            return final.error;
+        }
+
+        return final.data;
     } catch (error) {
         throw error
     }
