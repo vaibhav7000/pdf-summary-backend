@@ -50,16 +50,16 @@ async function summaryAndStore(req: Req, res: Res, next: Next): Promise<void> {
     try {
         const response = await storePDFSupabase(file.buffer, filename);
 
-        if('message' in response) {
+        if ('message' in response) {
             res.status(StatusCodes.BAD_REQUEST).json({
                 phrase: ReasonPhrases.BAD_REQUEST,
                 msg: response["message"],
             })
             return
         }
-        
+
         try {
-            await actionsOnPDFTable(id, filename, response.signedUrl);
+            await actionsOnPDFTable(id, filename, response.signedUrl, search);
 
 
             try {
@@ -82,13 +82,14 @@ async function summaryAndStore(req: Req, res: Res, next: Next): Promise<void> {
 
 }
 
-async function actionsOnPDFTable(id: number, title: string, link: string) {
+async function actionsOnPDFTable(id: number, title: string, link: string, search: string) {
     try {
         const response = await prismaClient.pdf.create({
             data: {
                 userId: id,
                 title,
-                link
+                link,
+                search
             }
         })
     } catch (error) {
@@ -96,4 +97,28 @@ async function actionsOnPDFTable(id: number, title: string, link: string) {
     }
 }
 
+async function onlySummary(req: Req, res: Res, next: Next) {
+    const search = req["search"];
+    const buffer = req["buffer"];
+
+    try {
+        if (!search || !buffer) {
+            throw new Error();
+        }
+
+        const summary = await getSummaryGemini(search, buffer);
+
+        res.status(StatusCodes.OK).json({
+            phrase: ReasonPhrases.OK,
+            summary
+        })
+    } catch (error) {
+
+    }
+}
+
 export default summaryAndStore
+
+export {
+    onlySummary
+}

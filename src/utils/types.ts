@@ -5,7 +5,9 @@ type Req = Request & {
     decode?: {
         id: number;
         email: string;
-    }
+    };
+    buffer?: Buffer,
+    search?: string,
 }
 type Res = Response
 type Next = NextFunction

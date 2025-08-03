@@ -1,18 +1,20 @@
 import { Router } from "express";
-import { userFreeTier, verifyToken } from "../../middlewares/application-routes";
+import { getPdfBuffer, userFreeTier, verifyToken } from "../../middlewares/application-routes";
 import { Next, Req, Res } from "../../utils/types";
 import upload from "../../utils/mutler/multer";
-import summaryAndStore from "../../controller/application-routes";
+import summaryAndStore, { onlySummary } from "../../controller/application-routes";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
 
 const router = Router();
 
 router.use(verifyToken);
 
-router.use(userFreeTier);
+// router.use(userFreeTier);
+router.get("/:id", getPdfBuffer, onlySummary);
 
 router.use(upload.single("files")); // middleware that is used to extract multi-part/format-data
 
-router.post("/", summaryAndStore);
+router.get("/", userFreeTier, summaryAndStore);
 
 export default router;
 

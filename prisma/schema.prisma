@@ -29,5 +29,6 @@ model Pdf {
   title String
   link String @unique
   userId Int
+  search String
   user User @relation(fields: [userId], references: [id])
 }

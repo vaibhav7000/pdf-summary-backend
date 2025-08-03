@@ -51,7 +51,7 @@ app.use(function(error: Error, req: Request, res: Response, next: NextFunction) 
             if(error.code === "LIMIT_UNEXPECTED_FILE") {
                 res.status(StatusCodes.BAD_REQUEST).json({
                     phrase: ReasonPhrases.BAD_REQUEST,
-                    msg: `Only accepts pdf files. ${req["file"]?.filename}`
+                    msg: `Only accepts pdf files. recieved ${req["file"]?.filename}`
                 })
                 return;
             }
