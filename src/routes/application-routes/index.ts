@@ -13,7 +13,7 @@ router.use(verifyToken);
 
 router.use(upload.single("files")); // middleware that is used to extract multi-part/format-data
 
-router.post("/", summaryAndStore,(req: Req, res: Res, next: Next) => {
+router.post("/", summaryAndStore, (req: Req, res: Res, next: Next) => {
     res.status(StatusCodes.OK).json({
         phrase: ReasonPhrases.OK,
         msg: "PDF saved successfully"

@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseClient = createClient(process.env.supabase_project_url!, process.env.supabase_service_key!);
 
 
-async function storePdf(filename: string, buffer: Buffer): Promise<void> {
+async function storePdf(filename: string, buffer: Buffer){
     const bucketName: string = "pdf-collection";
 
     try {
@@ -16,7 +16,7 @@ async function storePdf(filename: string, buffer: Buffer): Promise<void> {
             throw new Error(response["error"].message);
         }
 
-        console.log(response["data"]);
+        return response["data"]
     } catch (error) {
         throw error
     }

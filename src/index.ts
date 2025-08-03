@@ -54,7 +54,7 @@ app.use(function(error: Error, req: Request, res: Response, next: NextFunction) 
                 return;
             }
         }
-
+        console.log(error);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             phrase: ReasonPhrases.INTERNAL_SERVER_ERROR,
             msg: "Something up with the backend Try again later"
