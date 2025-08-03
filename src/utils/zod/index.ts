@@ -41,7 +41,28 @@ const loginOTPSchema = z.object({
     })
 })
 
+const tokenSchema = z.object({
+    token: z.string().startsWith("Bearer ", {
+        error: "Invalid token"
+    })
+})
+
+const jwtPayload = z.object({
+    id: z.number(),
+    email: z.email(),
+})
+
+const pdfSchema = z.object({
+    originalname: z.string().endsWith(".pdf", {
+        error: "Insert a file that end with .pdf extension"
+    }),
+    mimetype: z.literal("application/pdf", {
+        error: "Only PDF's are allowed"
+    })
+})
 
 export {
-    UserSchema, emailOTPSchema, loginOTPSchema, loginPasswordSchema 
+    UserSchema, emailOTPSchema, loginOTPSchema, loginPasswordSchema, tokenSchema, jwtPayload, pdfSchema
 }
+
+//https://one.google.com/ai-student?utm_source=gemini&utm_medium=web&utm_campaign=gemini_students_editors_promo&g1_landing_page=75

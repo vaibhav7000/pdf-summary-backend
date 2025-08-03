@@ -6,6 +6,7 @@ import { StatusCodes, ReasonPhrases } from "http-status-codes";
 import prismaClient from "./db";
 import redisClient from "./utils/redis";
 import allRoutes from "./routes/all-routes";
+import multer from "multer";
 
 const app = Express();
 
@@ -32,7 +33,28 @@ app.use("/api/v1", allRoutes);
 
 
 app.use(function(error: Error, req: Request, res: Response, next: NextFunction) {
+
     if(error) {
+
+        if(error instanceof multer.MulterError) {
+
+            if(error.code === "LIMIT_FILE_SIZE") {
+                res.status(StatusCodes.REQUEST_TOO_LONG).json({
+                    phrase: ReasonPhrases.REQUEST_TOO_LONG,
+                    msg: `File size should be less than 10 MB. Current file size is ${req["file"]?.size}`
+                })
+                return
+            }
+
+            if(error.code === "LIMIT_UNEXPECTED_FILE") {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    phrase: ReasonPhrases.BAD_REQUEST,
+                    msg: `Only accepts pdf files. ${req["file"]?.filename}`
+                })
+                return;
+            }
+        }
+
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             phrase: ReasonPhrases.INTERNAL_SERVER_ERROR,
             msg: "Something up with the backend Try again later"

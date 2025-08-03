@@ -2,6 +2,10 @@ import { Request, Response, NextFunction } from "express"
 
 type Req = Request & {
     token?: string;
+    decode?: {
+        id: number;
+        email: string;
+    }
 }
 type Res = Response
 type Next = NextFunction
