@@ -4,17 +4,43 @@ import { Next, Req, Res } from "../../utils/types";
 import upload from "../../utils/mutler/multer";
 import summaryAndStore, { onlySummary } from "../../controller/application-routes";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import prismaClient from "../../db";
 
 const router = Router();
 
 router.use(verifyToken);
 
 // router.use(userFreeTier);
-router.get("/:id", getPdfBuffer, onlySummary);
+router.get("/pdfid/:id", getPdfBuffer, onlySummary);
+
+router.get("/all", async (req: Req, res: Res, next: Next) => {
+    try {
+        const response = await prismaClient.pdf.findMany({
+            where: {
+                userId: req["decode"]?.id!
+            }
+        })
+
+        const filter = response.map(pdf => {
+            return {
+                search: pdf.search,
+                link: pdf.link
+            }
+        })
+
+        res.status(StatusCodes.OK).json({
+            phrase: StatusCodes.OK,
+            pdfs: filter
+        })
+    } catch (error) {
+
+    }
+})
 
 router.use(upload.single("files")); // middleware that is used to extract multi-part/format-data
 
-router.get("/", userFreeTier, summaryAndStore);
+router.post("/pdf", userFreeTier, summaryAndStore);
+
 
 export default router;
 

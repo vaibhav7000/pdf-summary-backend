@@ -9,8 +9,14 @@ import allRoutes from "./routes/all-routes";
 import multer from "multer";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { SupabaseAuthClient } from "@supabase/supabase-js/dist/module/lib/SupabaseAuthClient";
+import cors from "cors"
+
 
 const app = Express();
+
+app.use(cors({
+    origin: "*"
+}));
 
 (async () => {
     try {
